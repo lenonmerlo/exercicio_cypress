@@ -32,16 +32,18 @@ describe('Agenda de Contatos - Testes Funcionais', () => {
     it('Deve editar um contato existente', () => {
         // Certifica-se de que o contato original existe antes de editar
         cy.contains(contato.nome)
-          .should('exist') // Verifica se o contato existe
-          .parent() // Vai para o contêiner pai do elemento
-          .find('button.edit') // Encontra o botão de editar dentro do contêiner
-          .click(); // Clica no botão de editar
+            .should('exist')
+            .parent()
+            .get('.edit')  // Classe de edição, se não funcionar, teste `.find('.edit')`
+            .first()  // Caso tenha múltiplos botões
+            .click();
+
 
         // Atualiza os campos do contato
         cy.get('input[placeholder="Nome"]').clear().type(contatoAtualizado.nome);
         cy.get('input[placeholder="Telefone"]').clear().type(contatoAtualizado.telefone);
         cy.get('input[placeholder="E-mail"]').clear().type(contatoAtualizado.email);
-        cy.get('button.adicionar').click(); // Confirma a edição
+        cy.get('.alterar').click(); // Confirma a edição
 
         // Verifica se os dados foram atualizados
         cy.contains(contatoAtualizado.nome).should('exist');
@@ -52,15 +54,17 @@ describe('Agenda de Contatos - Testes Funcionais', () => {
     it('Deve remover um contato', () => {
         // Certifica-se de que o contato atualizado existe antes de remover
         cy.contains(contatoAtualizado.nome)
-          .should('exist') // Verifica se o contato atualizado existe
-          .parent() // Vai para o contêiner pai do contato
-          .find('button.delete') // Encontra o botão de deletar dentro do contêiner
-          .click(); // Clica no botão de deletar
-
-        // Confirmar a remoção se necessário
-        cy.on('window:confirm', () => true); // Aceita a confirmação de deleção
-
+            .should('exist') 
+            .parent() 
+            .get('.delete')  // Classe 'delete' para encontrar o botão correto
+            .first()
+            .click(); 
+    
+        // Confirmar a remoção
+        cy.on('window:confirm', () => true); 
+    
         // Verifica se o contato foi removido
         cy.contains(contatoAtualizado.nome).should('not.exist');
     });
+    
 });
